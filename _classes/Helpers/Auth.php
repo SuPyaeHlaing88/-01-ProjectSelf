@@ -8,4 +8,8 @@ class Auth{
         if(isset($_SESSION['user'])) return $_SESSION['user'];
         else HTTP::redirect(static::$loginUrl);
     }
+    
+    static function h($content){
+        return htmlspecialchars($content);
+    }
 }

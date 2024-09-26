@@ -8,10 +8,10 @@ use Libs\Database\UsersTable;
 use Helpers\HTTP;
 
 $email= $_POST['email'];
-$password= md5($_POST['password']);
+$conPassword=$_POST['password'];
 
 $table= new UsersTable(new MySQL());
-$user= $table->findByEmailAndPassword($email, $password);
+$user= $table->findByEmailAndPassword($email, password_verify($conPassword, $password));
 
 if($user){
 

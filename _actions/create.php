@@ -10,7 +10,7 @@ $data= [
     "email"=> $_POST['email'] ?? 'Unknown',
     "phone"=> $_POST['phone'] ?? 'Unknown',
     "address"=> $_POST['address'] ?? 'Unknown',
-    "password"=> md5($_POST['password']),
+    "password"=> password_hash($_POST['password'], PASSWORD_BCRYPT),
     "role_id"=> 1,
 ];
 

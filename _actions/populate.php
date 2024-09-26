@@ -18,7 +18,7 @@ if($table){
             'email' => $faker->email,
             'phone' => $faker->phoneNumber,
             'address' => $faker->address,
-            'password' => md5('password'),
+            'password' => password_hash('password', PASSWORD_BCRYPT),
             'role_id' => $i<5 ? rand(1, 3): 1
         ];
         $table ->insert($data);
