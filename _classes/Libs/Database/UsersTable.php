@@ -4,34 +4,37 @@ namespace Libs\Database;
 
 use PDOException;
 
-class UsersTable{
-    private $db=null;
-    
-    public function __construct(MySQL $db){
-        $this->db= $db->connect();
+class UsersTable
+{
+    private $db = null;
+
+    public function __construct(MySQL $db)
+    {
+        $this->db = $db->connect();
     }
 
     // Insert Method 
-    public function insert($data){
-        try{
-          $query= "INSERT INTO users
+    public function insert($data)
+    {
+        try {
+            $query = "INSERT INTO users
                     (name, email, phone, address, password, role_id, create_at)
                     VALUES 
                     (:name, :email, :phone, :address, :password, :role_id, NOW())
                 ";
 
-            $statement= $this->db->prepare($query);
+            $statement = $this->db->prepare($query);
             $statement->execute($data);
 
             return $this->db->lastInsertId();
-            
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             return $e->getMessage();
         }
     }
 
-    public function getAll(){
-        $statement= $this->db->query("
+    public function getAll()
+    {
+        $statement = $this->db->query("
             SELECT users.*, roles.name AS role, roles.value
             FROM users LEFT JOIN roles
             ON users.role_id = roles.id
@@ -41,27 +44,36 @@ class UsersTable{
     }
 
     // for check to login by created user
-    public function findByEmailAndPassword($email, $password){
-        $statement= $this->db->prepare("
+    public function findByEmailAndPassword($email, $password)
+    {
+        $statement = $this->db->prepare("
             SELECT users.*, roles.name AS role, roles.value
             FROM users LEFT JOIN roles
             ON users.role_id= roles.id
             WHERE users.email = :email
-            AND users.password= :password
+           
         ");
 
         $statement->execute([
             'email' => $email,
-            'password' => $password
+            // 'password' => $password
+
         ]);
 
         $row = $statement->fetch();
-        return $row ?? false;
+        // return $row ?? false;
+        // Check if user exists and verify the password
+        if ($row && password_verify($password, $row->password)) {
+            return $row; // Return user if password is correct
+        }
+        // Return false if the credentials are invalid
+        return false;
     }
 
     // Each Profile Photo
-    public function updatePhoto($id, $name){
-        $statement= $this->db->prepare("
+    public function updatePhoto($id, $name)
+    {
+        $statement = $this->db->prepare("
             UPDATE users SET photo= :name WHERE id= :id
         ");
         $statement->execute(['name' => $name, 'id' => $id]);
@@ -69,35 +81,50 @@ class UsersTable{
     }
 
     // for real actions
-    public function suspend($id){
+    public function suspended($id)
+	{
+		$statement = $this->db->prepare("
+            SELECT suspended FROM users WHERE id = :id
+        ");
+		$statement->execute([':id' => $id]);
+		$row = $statement->fetch();
+
+		return $row->suspended;
+	}
+    
+    public function suspend($id)
+    {
         $statement = $this->db->prepare("
             UPDATE users SET suspended=1 WHERE id= :id
         ");
-        $statement->execute(['id' => $id ]);
+        $statement->execute(['id' => $id]);
         return $statement->rowCount();
     }
-    
-    public function unsuspend($id){
+
+    public function unsuspend($id)
+    {
         $statement = $this->db->prepare("
             UPDATE users SET suspended=0 WHERE id= :id
         ");
-        $statement->execute(['id' => $id ]);
+        $statement->execute(['id' => $id]);
         return $statement->rowCount();
     }
 
-    public function changeRole($id, $role){
+    public function changeRole($id, $role)
+    {
         $statement = $this->db->prepare("
             UPDATE users SET role_id= :role WHERE id= :id
         ");
-        $statement->execute(['id'=> $id, 'role'=>$role]);
+        $statement->execute(['id' => $id, 'role' => $role]);
         return $statement->rowCount();
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $statement = $this->db->prepare("
             DELETE FROM users WHERE id= :id
         ");
-        $statement->execute(['id' => $id ]);
+        $statement->execute(['id' => $id]);
         return $statement->rowCount();
     }
 }

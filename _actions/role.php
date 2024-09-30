@@ -7,7 +7,9 @@ use Helpers\HTTP;
 use Helpers\Auth;
 
 $auth= Auth::check();
+
 $table= new UsersTable(new MySQL());
+
 $id= $_GET['id'];
 $role= $_GET['role'];
 

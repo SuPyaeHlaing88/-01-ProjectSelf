@@ -8,6 +8,7 @@ use Helpers\Auth;
 $table= new UsersTable(new MySQL());
 $all = $table->getAll();
 $auth= Auth::check();
+// var_dump($auth->value);
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +24,7 @@ $auth= Auth::check();
     <div class="container">
         <div style="float: right;">
             <a href="profile.php">Profile</a> |
-            <a href="_actions/logout.php">Logout</a>
+            <a href="_actions/logout.php" class="text-danger">Logout</a>
         </div>
         <h1 class="mt-5 mb-5">
             Manage Users
@@ -57,19 +58,23 @@ $auth= Auth::check();
                             <span class="badge bg-primary">
                             <?= $user->role ?>
                             </span>
-                        <?php else: ?>
-                            <span class="badge bg-sucesses">
+                        <?php elseif($user->value ==='3') : ?>
+                            <span class="badge bg-success">
                             <?= $user->role ?>
+                            </span>
+                        <?php else: ?>
+                            <span class="badge bg-blue">
+                            <small>none</small>
                             </span>
                         <?php endif ?>
                     </td>
                     <!-- Actions -->
                     <td>
-                        <?php if($auth->value >1):?>
+                        <?php if($auth->value>=1):?>
                             <!-- dorpdown -->
                             <div class="btn-group dropdown">
                                 <a href="#" 
-                                class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                class="btn btn-outline-primary dropdown-toggle"
                                 data-bs-toggle="dropdown">
                                 Change Role</a>
 
@@ -79,13 +84,11 @@ $auth= Auth::check();
                                     <a href="_actions/role.php?id=<?= $user->id ?>&role=3" class="dropdown-item">Admin</a>
                                 </div>
 
-                                <?php if($user->suspended): ?>
-                                    <a href="_actions/unsuspend.php?id=<?= $user->id ?>" 
-                                    class="btn btn-sm btn-danger">Suspended</a>
-                                <?php else: ?>
-                                    <a href="_actions/suspend.php?id=<?= $user->id ?>" 
-                                    class="btn btn-sm btn-danger">Active</a>
-                                <?php endif ?>
+                                <?php if ($user->suspended) : ?>
+									<a href="_actions/unsuspend.php?id=<?= $user->id ?>" class="btn btn-sm btn-danger">Suspended</a>
+								<?php else : ?>
+									<a href="_actions/suspend.php?id=<?= $user->id ?>" class="btn btn-sm btn-outline-success">Active</a>
+								<?php endif ?>
 
                                 <?php if($user->id !== $auth->id): ?>
                                     <a href="_actions/delete.php?id=<?= $user->id ?>" 
@@ -94,7 +97,7 @@ $auth= Auth::check();
                                 <?php endif ?>
                             </div>
                             <?php else: ?>
-                                ###
+                                <p class="text-muted">###</p>
                             <?php endif ?>
                     </td>
                 </tr>
