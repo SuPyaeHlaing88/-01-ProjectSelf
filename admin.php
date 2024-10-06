@@ -19,6 +19,8 @@ $auth= Auth::check();
     <title>Admin</title>
     <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="js/bootstrap.bundle.min.js"> -->
+     <script src="js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div class="container">

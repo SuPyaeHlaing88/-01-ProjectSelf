@@ -11,4 +11,4 @@ $table= new UsersTable(new MySQL());
 
 $id= $_GET['id'];
 $table->unsuspend($id);
-HTTP::redirect("/admin.php");
+HTTP::redirect("/admin.php"); 
